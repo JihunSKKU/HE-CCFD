@@ -9,6 +9,7 @@
 *.pkl
 *.pth
 *.pt
+*.png
 
 ### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:
@@ -97,6 +98,7 @@ Temporary Items
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
+__pycache__
 __pycache__/
 *.py[cod]
 *$py.class

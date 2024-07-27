@@ -1,18 +1,25 @@
 import torch
 import torch.nn as nn
 from torch.optim import Adam
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score
+from copy import deepcopy
 
-def train(model, train_loader, test_loader, epochs, learning_rate, device):
-    criterion = nn.BCEWithLogitsLoss()
+def train(model, train_loader, test_loader, epochs, learning_rate, device, pos_weight):
+    criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     optimizer = Adam(model.parameters(), lr=learning_rate)
 
     best_f1 = 0
     best_model = None
 
-    for epoch in range(epochs):
-        print(f'Epoch {epoch+1} - ', end='')
+    train_losses = []
+    train_f1_scores = []
+    test_losses = []
+    test_f1_scores = []
 
+    for epoch in range(epochs):
+        print(f'Epoch {epoch+1}')
+
+        # Training phase
         model.train()
         train_loss, correct, total = 0.0, 0, 0
         all_labels, all_preds = [], []
@@ -33,9 +40,16 @@ def train(model, train_loader, test_loader, epochs, learning_rate, device):
             all_labels.extend(label.cpu().numpy())
             all_preds.extend(preds.cpu().numpy())
 
+        train_losses.append(train_loss / len(train_loader))
+        train_acc = accuracy_score(all_labels, all_preds)
         train_f1 = f1_score(all_labels, all_preds)
-        print(f'loss: {train_loss / len(train_loader):.4f}, acc: {correct / total * 100:.2f}%, f1: {train_f1:.4f}', end=' / ')
+        train_precision = precision_score(all_labels, all_preds)
+        train_recall = recall_score(all_labels, all_preds)
+        train_f1_scores.append(train_f1)
 
+        print(f'Train - loss: {train_loss / len(train_loader):.4f}, acc: {train_acc * 100:.2f}%, precision: {train_precision:.4f}, recall: {train_recall:.4f}, f1: {train_f1:.4f}')
+
+        # Testing phase
         model.eval()
         test_loss, correct, total = 0.0, 0, 0
         all_labels, all_preds = [], []
@@ -54,11 +68,17 @@ def train(model, train_loader, test_loader, epochs, learning_rate, device):
                 all_labels.extend(label.cpu().numpy())
                 all_preds.extend(preds.cpu().numpy())
 
+        test_losses.append(test_loss / len(test_loader))
+        test_acc = accuracy_score(all_labels, all_preds)
         test_f1 = f1_score(all_labels, all_preds)
-        print(f'test loss: {test_loss / len(test_loader):.4f}, test acc: {correct / total * 100:.2f}%, test f1: {test_f1:.4f}')
+        test_precision = precision_score(all_labels, all_preds)
+        test_recall = recall_score(all_labels, all_preds)
+        test_f1_scores.append(test_f1)
+
+        print(f'Test  - loss: {test_loss / len(test_loader):.4f}, acc: {test_acc * 100:.2f}%, precision: {test_precision:.4f}, recall: {test_recall:.4f}, f1: {test_f1:.4f}')
 
         if test_f1 > best_f1:
             best_f1 = test_f1
-            best_model = model
+            best_model = deepcopy(model)
     
-    return best_model
+    return best_model, train_losses, train_f1_scores, test_losses, test_f1_scores

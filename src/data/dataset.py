@@ -5,11 +5,13 @@ from .load_data import load_data_undersampling
 class CreditCardDataset(Dataset):
     def __init__(self, mode='train'):
         if mode == 'train':
-            self.x, _, self.y, _ = load_data_undersampling()
+            self.x, _, _, self.y, _, _ = load_data_undersampling(log=True)
+        elif mode == 'valid':
+            _, self.x, _, _, self.y, _ = load_data_undersampling()
         elif mode == 'test':
-            _, self.x, _, self.y = load_data_undersampling()
+            _, _, self.x, _, _, self.y = load_data_undersampling()
         else:
-            raise ValueError('Argument of mode should be train or test.')
+            raise ValueError('Argument of mode should be train, valid, or test.')
 
     def __len__(self):
         return len(self.x)

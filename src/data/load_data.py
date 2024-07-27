@@ -21,21 +21,24 @@ def load_data_undersampling(log: bool = False):
     if log:
         print(data.Class.value_counts())
 
-    # Splitting data
+    # Splitting data into initial train and temp sets
     X = data.drop('Class', axis=1)
     y = data['Class']
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
+    X_valid, X_test, y_valid, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
     # Scaling data
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
+    X_valid = scaler.transform(X_valid)
     X_test = scaler.transform(X_test)
 
     if log:
         print("\nData loading complete.\n")
 
     X_train_3d = np.expand_dims(X_train, axis=1)
+    X_valid_3d = np.expand_dims(X_valid, axis=1)
     X_test_3d = np.expand_dims(X_test, axis=1)
 
-    return X_train_3d, X_test_3d, y_train.reset_index(drop=True), y_test.reset_index(drop=True)
+    return X_train_3d, X_valid_3d, X_test_3d, y_train.reset_index(drop=True), y_valid.reset_index(drop=True), y_test.reset_index(drop=True)

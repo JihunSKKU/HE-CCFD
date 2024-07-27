@@ -12,10 +12,14 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 if __name__ == '__main__':
     input_length = 30
-    model = CNN(input_length).to(device)
-    model.load_state_dict(torch.load('./models/best_model.pth'))
+    # activation <= 'ReLU', 'ApproxReLU', or 'Square'
+    activation = 'ApproxReLU'
+    model = CNN(input_length, activation).to(device)
+    model.load_state_dict(torch.load(f'./models/best_{activation}_model.pth'))
 
+    batch_size = 64
     test_dataset = CreditCardDataset(mode='test')
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
+    print(f"{activation} model evaluation")
     evaluate(model, test_loader, device)
