@@ -7,6 +7,29 @@ import (
 	"github.com/tuneinsight/lattigo/v5/core/rlwe"
 )
 
+type Conv1DLayer struct {
+    InChannels  int
+    OutChannels int
+    KernelSize  int
+    Stride      int
+    Padding     int
+    Weight      [][][]float64   // 3D Slice for Weight
+    Bias        []float64       // Bias
+}
+
+type FCLayer struct {
+    InFeatures  int
+    OutFeatures int
+    Weight      [][]float64
+    Bias        []float64
+}
+
+type BatchNormLayer struct {
+	Channels int
+	Weight   []float64
+	Bias     []float64
+}
+
 func HEConv1Layer(ctx *Context, op0 *Ciphertext, layer *Conv1DLayer) (opOut *Ciphertext) {
 	var err error
 
