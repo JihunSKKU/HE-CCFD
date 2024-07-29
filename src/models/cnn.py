@@ -75,3 +75,7 @@ class CNN(nn.Module):
 
         x = self.fc2(x)
         return x
+
+if __name__ == '__main__':
+    model = CNN(100, 'ReLU')
+    print(model)
