@@ -44,8 +44,10 @@ func NewContext(params hefloat.Parameters) (ctx *Context) {
 		}
 		galEls = append(galEls, params.GaloisElementForComplexConjugation())
 		
+		// eval 생성 부분이 15초 정도 걸림
 		eval := hefloat.NewEvaluator(params, rlwe.NewMemEvaluationKeySet(
 				ctx.rlk, kgen.GenGaloisKeysNew(galEls, sk)...))
+
 		ctx.evalPool = &sync.Pool{
 			New: func() interface{} {
 				if eval != nil {
@@ -124,18 +126,18 @@ func (ctx *Context) Encrypt(ptxt *Plaintext) (ctxt *Ciphertext) {
 func (ctx *Context) Decrypt(ctxt *Ciphertext) (ptxt *Plaintext) {
 	var err error
 
-	numImgs := len(ctxt.data)
+	numCtxt := len(ctxt.data)
 
 	ptxt = &Plaintext{
-		data: 		make([][]float64, numImgs),
+		data: 		make([][]float64, numCtxt),
 		size: 		ctxt.size,
 		interval: 	ctxt.interval,
 		constVal: 	ctxt.constVal,
 		space: 		ctxt.space,
 	}
 
-	ptxtC := make([][]complex128, numImgs)
-	for i := 0; i < numImgs; i++ {
+	ptxtC := make([][]complex128, numCtxt)
+	for i := 0; i < numCtxt; i++ {
 		decrypted := ctx.dec.DecryptNew(ctxt.data[i])
 		ptxtC[i] = make([]complex128, ctxt.data[i].Slots())
 		if err = ctx.ecd.Decode(decrypted, ptxtC[i]); err != nil {
@@ -143,10 +145,10 @@ func (ctx *Context) Decrypt(ctxt *Ciphertext) (ptxt *Plaintext) {
 		}
 	}
 
-	for i := 0; i < numImgs; i++ {
-		ptxt.data[i] = make([]float64, ctxt.size)
-		for p := 0; p < ctxt.size; p++ {
-			ptxt.data[i][p] = real(ptxtC[i][p*ctxt.interval])
+	for i := 0; i < numCtxt; i++ {
+		ptxt.data[i] = make([]float64, ctxt.data[i].Slots())
+		for p := 0; p < ctxt.data[i].Slots(); p++ {
+			ptxt.data[i][p] = real(ptxtC[i][p])
 		}
 	}
 

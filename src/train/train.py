@@ -45,10 +45,12 @@ def train(model, train_loader, valid_loader, epochs, learning_rate, device, pos_
         train_losses.append(train_loss / len(train_loader))
         train_acc = accuracy_score(all_labels, all_preds)
         train_f1 = f1_score(all_labels, all_preds)
+        train_precision = precision_score(all_labels, all_preds)
+        train_recall = recall_score(all_labels, all_preds)
         train_accuracies.append(train_acc)
         train_f1_scores.append(train_f1)
 
-        print(f'Train - loss: {train_loss / len(train_loader):.4f}, acc: {train_acc * 100:.2f}%, f1: {train_f1:.4f}')
+        print(f'Train - loss: {train_loss / len(train_loader):.4f}, acc: {train_acc * 100:.2f}%, precision: {train_precision:.4f}, recall: {train_recall:.4f}, f1: {train_f1:.4f}')
 
         # Validation phase
         model.eval()
@@ -72,10 +74,12 @@ def train(model, train_loader, valid_loader, epochs, learning_rate, device, pos_
         valid_losses.append(valid_loss / len(valid_loader))
         valid_acc = accuracy_score(all_labels, all_preds)
         valid_f1 = f1_score(all_labels, all_preds)
+        valid_precision = precision_score(all_labels, all_preds)
+        valid_recall = recall_score(all_labels, all_preds)
         valid_accuracies.append(valid_acc)
         valid_f1_scores.append(valid_f1)
 
-        print(f'Valid - loss: {valid_loss / len(valid_loader):.4f}, acc: {valid_acc * 100:.2f}%, f1: {valid_f1:.4f}')
+        print(f'Valid - loss: {valid_loss / len(valid_loader):.4f}, acc: {valid_acc * 100:.2f}%, precision: {valid_precision:.4f}, recall: {valid_recall:.4f}, f1: {valid_f1:.4f}')
 
         if valid_f1 > best_f1:
             best_f1 = valid_f1

@@ -22,7 +22,7 @@ func ReadCSV(filePath string) ([][]float64, error) {
     }
 
     data := make([][]float64, len(records))
-    for i, record := range records[0:] {
+    for i, record := range records[1:] {
         data[i] = make([]float64, len(record))
         for j, value := range record {
             if value == "" {
@@ -37,7 +37,7 @@ func ReadCSV(filePath string) ([][]float64, error) {
     return data, nil
 }
 
-type heccfdModel struct {
+type HeccfdModel struct {
 	Conv1 *Conv1DLayer `json:"conv1"`
 	Conv2 *Conv1DLayer `json:"conv2"`
 
@@ -49,8 +49,8 @@ type heccfdModel struct {
 	BatchNorm3 *BatchNormLayer `json:"batchnorm3"`
 }
 
-func (model heccfdModel) LoadModelParams(filePath string) (heccfdModel, error) {
-	var modelParams heccfdModel
+func (model HeccfdModel) LoadModelParams(filePath string) (HeccfdModel, error) {
+	var modelParams HeccfdModel
 	
 	file, err := os.Open(filePath)
 	if err != nil {

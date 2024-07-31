@@ -15,7 +15,8 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 if __name__ == '__main__':
     input_length = 30
-    activation = 'Square'
+    # activation <= 'ReLU', 'ApproxReLU', or 'Square'
+    activation = 'ApproxReLU'
     model = CNN(input_length, activation).to(device)
 
     epochs = 100

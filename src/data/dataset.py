@@ -9,7 +9,7 @@ class CreditCardDataset(Dataset):
         elif mode == 'valid':
             _, self.x, _, _, self.y, _ = load_data_undersampling()
         elif mode == 'test':
-            _, _, self.x, _, _, self.y = load_data_undersampling()
+            _, _, self.x, _, _, self.y = load_data_undersampling(log=True)
         else:
             raise ValueError('Argument of mode should be train, valid, or test.')
 
