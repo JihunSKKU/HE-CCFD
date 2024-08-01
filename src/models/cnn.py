@@ -13,21 +13,27 @@ class ApproxReLU(nn.Module):
         super(ApproxReLU, self).__init__()
         self.scale = 30
 
+    # def forward(self, x):
+    #     x = x / self.scale
+        
+    #     # 4차
+    #     coeff = [0.0243987, 0.49096448, 1.08571579, 0.01212056, -0.69068458]
+        
+    #     # 8차        
+    #     # coeff = [0.0172036, 0.49211715, 1.90813097, 0.0811299, -5.34212661, -0.16520139, 7.32628553, 0.09354028, -3.44125495]
+        
+    #     result = 0
+    #     for i in range(len(coeff)):
+    #         result += coeff[i] * x ** i
+        
+    #     result *= self.scale
+    #     return result
+    
     def forward(self, x):
-        x = x / self.scale
+        y = -0.000025580910291249533 * (((x * x) * (x * (x + 0.012120560832063566) + 32.57147370699265)) + (441.86802958656693 * x) + 658.7647953792389)
         
-        # 4차
-        coeff = [0.0243987, 0.49096448, 1.08571579, 0.01212056, -0.69068458]
+        return y
         
-        # 8차        
-        # coeff = [0.0172036, 0.49211715, 1.90813097, 0.0811299, -5.34212661, -0.16520139, 7.32628553, 0.09354028, -3.44125495]
-        
-        result = 0
-        for i in range(len(coeff)):
-            result += coeff[i] * x ** i
-        
-        result *= self.scale
-        return result
 
 class CNN(nn.Module):
     def __init__(self, input_length, activation):

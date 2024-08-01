@@ -22,7 +22,7 @@ func initLogQ(depth, logScale int) (logQ []int) {
 func initParams() (params hefloat.Parameters) {
 	const (
 		logSlots 	= 13
-		depth 		= 11
+		depth 		= 2
 		logScale 	= 35		
 	)
 

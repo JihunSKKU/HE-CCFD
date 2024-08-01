@@ -37,7 +37,15 @@ print(cheb_fit.coef)
 # Convert Chebyshev polynomial to standard polynomial and print the coefficients
 poly_fit = cheb_fit.convert(domain=cheb_fit.domain, kind=Polynomial)
 print("\nStandard polynomial coefficients (highest degree first):")
+
+scale = 30
 print(poly_fit.coef)
+print(poly_fit.coef[4] / scale**3)
+print(poly_fit.coef[3] / scale**2)
+print(poly_fit.coef[2] / scale)
+print(poly_fit.coef[1])
+print(poly_fit.coef[0] * scale)
+
 
 # Plot the results
 plt.plot(x, y, label='ReLU(x)')
@@ -51,7 +59,7 @@ plt.grid(True)
 plt.savefig('./images/relu_approximation.png')  # Save the plot as an image file
 
 # Evaluate the Chebyshev polynomial approximation at specific points
-x_points = np.linspace(-1, 1, 11)
+x_points = np.linspace(-1, 1, 6)
 y_points = cheb_fit(x_points)
 
 print("\nFunction evaluation at specific points:")

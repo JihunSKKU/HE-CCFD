@@ -19,6 +19,15 @@ type Context struct {
 	evalPool 	*sync.Pool
 }
 
+func (ctx *Context) GetEval() (eval *hefloat.Evaluator) {
+	eval = ctx.evalPool.Get().(*hefloat.Evaluator)
+	return
+}
+func (ctx *Context) PutEval(eval *hefloat.Evaluator) {
+	ctx.evalPool.Put(eval)
+	return
+}
+
 func NewContext(params hefloat.Parameters) (ctx *Context) {
 	kgen := rlwe.NewKeyGenerator(params)
 	sk, pk := kgen.GenKeyPairNew()
