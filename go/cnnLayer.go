@@ -26,9 +26,11 @@ type FCLayer struct {
 }
 
 type BatchNormLayer struct {
-	Channels int
-	Weight   []float64
-	Bias     []float64
+	Channels 	int
+	Gamma   	[]float64
+	Beta    	[]float64
+	runningMean []float64
+	runningVar  []float64
 }
 
 func HEConv1Layer(ctx *Context, op0 *Ciphertext, layer *Conv1DLayer) (opOut *Ciphertext) {

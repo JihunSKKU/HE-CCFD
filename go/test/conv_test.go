@@ -2,6 +2,7 @@ package heccfd_test
 
 import (
 	"fmt"
+	"math"
 	"testing"
 	"time"
 
@@ -55,7 +56,7 @@ func convCal() {
 	errorRate1 := float64(0)
 	for i := 0; i < 32; i++ {
 		for j := 0; j < 29; j++ {
-			errorRate1 += result.GetData()[0][i*32+j] - ptxtResult[i][j]
+			errorRate1 += math.Abs(result.GetData()[0][i*32+j] - ptxtResult[i][j])
 		}
 	}
 	errorRate1 /= 32 * 29

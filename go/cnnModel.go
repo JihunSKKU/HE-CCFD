@@ -152,15 +152,15 @@ func parseBatchNormLayer(layerName string, jsonData map[string]interface{}) *Bat
 			Channels: len(bnWeight),
 		}
 
-		bn.Weight = make([]float64, len(bnWeight))
+		bn.Gamma = make([]float64, len(bnWeight))
 		for i, w := range bnWeight {
-			bn.Weight[i] = w.(float64)
+			bn.Gamma[i] = w.(float64)
 		}
 
 		if bnBias, ok := jsonData[layerName+".bias"].([]interface{}); ok {
-			bn.Bias = make([]float64, len(bnBias))
+			bn.Beta = make([]float64, len(bnBias))
 			for i, b := range bnBias {
-				bn.Bias[i] = b.(float64)
+				bn.Beta[i] = b.(float64)
 			}
 		}
 

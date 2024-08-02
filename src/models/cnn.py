@@ -13,42 +13,38 @@ class ApproxReLU(nn.Module):
         super(ApproxReLU, self).__init__()
         self.scale = 30
 
-    # def forward(self, x):
-    #     x = x / self.scale
-        
-    #     # 4차
-    #     coeff = [0.0243987, 0.49096448, 1.08571579, 0.01212056, -0.69068458]
-        
-    #     # 8차        
-    #     # coeff = [0.0172036, 0.49211715, 1.90813097, 0.0811299, -5.34212661, -0.16520139, 7.32628553, 0.09354028, -3.44125495]
-        
-    #     result = 0
-    #     for i in range(len(coeff)):
-    #         result += coeff[i] * x ** i
-        
-    #     result *= self.scale
-    #     return result
-    
     def forward(self, x):
-        y = -0.000025580910291249533 * (((x * x) * (x * (x + 0.012120560832063566) + 32.57147370699265)) + (441.86802958656693 * x) + 658.7647953792389)
+        return -0.002012*(x**4 - 73.2107355865 * x*x - 248.508946322 *x - 59.5427435388)
+
+        x = x / self.scale
         
-        return y
+        # 4차
+        coeff = [0.0243987, 0.49096448, 1.08571579, 0.01212056, -0.69068458]
         
+        # 8차        
+        # coeff = [0.0172036, 0.49211715, 1.90813097, 0.0811299, -5.34212661, -0.16520139, 7.32628553, 0.09354028, -3.44125495]
+        
+        result = 0
+        for i in range(len(coeff)):
+            result += coeff[i] * x ** i
+        
+        result *= self.scale
+        return result        
 
 class CNN(nn.Module):
     def __init__(self, input_length, activation):
         super(CNN, self).__init__()
         self.conv1 = nn.Conv1d(in_channels=1, out_channels=32, kernel_size=2, stride=1, padding=0)
         self.batchnorm1 = nn.BatchNorm1d(32)
-        self.drop1 = nn.Dropout(0.2)
+        self.drop1 = nn.Dropout(0.1)
 
         self.conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=2, stride=1, padding=0)
         self.batchnorm2 = nn.BatchNorm1d(64)
-        self.drop2 = nn.Dropout(0.3)
+        self.drop2 = nn.Dropout(0.2)
         
         self.fc1 = nn.Linear(64 * (input_length - 2), 64)
         self.batchnorm3 = nn.BatchNorm1d(64)
-        self.drop3 = nn.Dropout(0.4)
+        self.drop3 = nn.Dropout(0.5)
 
         self.fc2 = nn.Linear(64, 1)
 
@@ -75,7 +71,7 @@ class CNN(nn.Module):
         x = x.view(x.size(0), -1)
 
         x = self.fc1(x)
-        x = self.batchnorm3(x)
+        x = self.batchnorm3(x) 
         x = self.activation(x)
         x = self.drop3(x)
 

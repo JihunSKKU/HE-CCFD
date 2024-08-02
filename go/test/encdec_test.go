@@ -13,7 +13,7 @@ func encdec() {
 	nums := []float64{-2.5580910291249533e-05, 
 		-0.526458584157997, -1414.7474006616037, 
 		-19192.611667394496, -28613.55891643511}
-	scale := 1.0
+	scale := 1.0 / 5.0
 
 	tmp := [][]float64{nums}
 	ptxt := heccfd.NewPlaintext(tmp)
@@ -27,6 +27,7 @@ func encdec() {
 
 	eval := ctx.GetEval()
 	eval.MulRelin(ctxt.GetData()[0], scale, ctxt.GetData()[0])
+	eval.Rescale(ctxt.GetData()[0], ctxt.GetData()[0])
 	ctx.PutEval(eval)
 	ptxt2 := ctx.Decrypt(ctxt)
 

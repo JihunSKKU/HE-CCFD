@@ -15,7 +15,7 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load(model_path))
     
     model_dict = {}
-    for name, param in model.named_parameters():
+    for name, param in model.state_dict().items():
         model_dict[name] = param.detach().cpu().numpy().tolist()
 
     json_path = './go/models/best_ApproxReLU_model.json'
