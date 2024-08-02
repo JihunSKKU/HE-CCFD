@@ -19,9 +19,9 @@ if __name__ == '__main__':
     activation = 'ApproxReLU'
     model = CNN(input_length, activation).to(device)
 
-    epochs = 100
-    learning_rate = 0.00007
-    batch_size = 64
+    epochs = 20
+    learning_rate = 0.0001
+    batch_size = 32
 
     train_dataset = CreditCardDataset(mode='train')
     valid_dataset = CreditCardDataset(mode='valid')
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
     
-    pos_weight = torch.tensor([2.0], dtype=torch.float).to(device)
+    pos_weight = torch.tensor([1.0], dtype=torch.float).to(device)
 
     best_model, train_losses, train_f1_scores, train_accuracies, valid_losses, valid_f1_scores, valid_accuracies = train(
         model, train_loader, valid_loader, epochs, learning_rate, device, pos_weight)
