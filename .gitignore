@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,go,python,jupyternotebooks,windows,linux,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,go,python,jupyternotebooks,windows,linux,macos
 
+### Test ###
+*.sh
+
 ### Dataset ###
 *.csv
 *.zip

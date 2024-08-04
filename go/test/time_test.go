@@ -1,8 +1,9 @@
-package examples
+package test
 
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"testing"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 )
 
 func TestTime(*testing.T) {
+	rand.Seed(time.Now().UnixNano())
+	
 	// Initialize parameters
 	params := initParams()
 
@@ -26,18 +29,20 @@ func TestTime(*testing.T) {
 	if err != nil {
 		panic(err)
 	}
+	// Random value
+	randValue := randomIntInRange(0, len(testImages))
 	// Add to channel dimension
-	testImage := [][]float64{testImages[0]}
+	testImage := [][]float64{testImages[randValue]}
 
 	testLabels, err := heccfd.ReadCSV("../../data/y_test.csv")
 	if err != nil {
 		panic(err)
 	}
-	testLabel := testLabels[0]
+	testLabel := testLabels[randValue]
 
 	// Initialize the model
 	var model heccfd.HEccfdModel
-	model, err = model.LoadModelParams("../models/ApproxSwish_model.json")
+	model, err = model.LoadModelParams("../../models/ApproxSwish_model.json")
 	if err != nil {
 		panic(err)
 	}

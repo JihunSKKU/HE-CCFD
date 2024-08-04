@@ -1,6 +1,8 @@
-package examples
+package test
 
 import (
+	"math/rand"
+
 	"github.com/tuneinsight/lattigo/v5/he/hefloat"
 	"github.com/tuneinsight/lattigo/v5/ring"
 )
@@ -33,4 +35,8 @@ func initParams() (params hefloat.Parameters) {
 		panic(err)
 	}
 	return
+}
+
+func randomIntInRange(min, max int) int {
+	return min + rand.Intn(max-min)
 }

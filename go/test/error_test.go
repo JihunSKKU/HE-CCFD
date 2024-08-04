@@ -1,4 +1,4 @@
-package examples
+package test
 
 import (
 	"fmt"
@@ -20,12 +20,15 @@ func TestError(*testing.T) {
 	if err != nil {
 		panic(err)
 	}
+	// Random value
+	randValue := randomIntInRange(0, len(testImages))
+
 	// Add to channel dimension
-	testImage := [][]float64{testImages[0]}
+	testImage := [][]float64{testImages[randValue]}
 
 	// Initialize the model
 	var model heccfd.HEccfdModel
-	model, err = model.LoadModelParams("../models/ApproxSwish_model.json")
+	model, err = model.LoadModelParams("../../models/ApproxSwish_model.json")
 	if err != nil {
 		panic(err)
 	}
