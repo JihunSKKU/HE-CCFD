@@ -7,10 +7,11 @@ import torch
 from src.models.cnn import CNN
 
 if __name__ == '__main__':
-    model_path = './models/best_ApproxReLU_model.pth'
+    activation = 'ApproxSwish'
+    
+    model_path = f'./models/best_{activation}_model.pth'
     
     input_length = 30
-    activation = 'ApproxReLU'
     model = CNN(input_length, activation).to(torch.device('cpu'))
     model.load_state_dict(torch.load(model_path))
     
@@ -18,7 +19,7 @@ if __name__ == '__main__':
     for name, param in model.state_dict().items():
         model_dict[name] = param.detach().cpu().numpy().tolist()
 
-    json_path = './go/models/best_ApproxReLU_model.json'
+    json_path = f'./go/models/{activation}_model.json'
     with open(json_path, 'w') as json_file:
         json.dump(model_dict, json_file)
 

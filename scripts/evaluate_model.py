@@ -12,8 +12,8 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 if __name__ == '__main__':
     input_length = 30
-    # activation <= 'ReLU', 'ApproxReLU', or 'Square'
-    activation = 'ApproxReLU'
+    # activation <= 'ReLU', 'ApproxSwish', or 'Square'
+    activation = 'ApproxSwish'
     model = CNN(input_length, activation).to(device)
     model.load_state_dict(torch.load(f'./models/best_{activation}_model.pth'))
 

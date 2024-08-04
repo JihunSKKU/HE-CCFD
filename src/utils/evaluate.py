@@ -5,11 +5,11 @@ def evaluate(model, test_loader, device):
     model.eval()
     all_labels, all_preds = [], []
     with torch.no_grad():
-        for x, label in test_loader:
-            x, label = x.to(device), label.to(device).float()
-            output = model(x).squeeze()
-            preds = (torch.sigmoid(output) > 0.5).long()
-            all_labels.extend(label.cpu().numpy())
+        for inputs, labels in test_loader:
+            inputs, labels = inputs.to(device), labels.to(device).float()
+            outputs = model(inputs).squeeze()
+            preds = (outputs > 0.5).long()
+            all_labels.extend(labels.cpu().numpy())
             all_preds.extend(preds.cpu().numpy())
 
     accuracy = accuracy_score(all_labels, all_preds)

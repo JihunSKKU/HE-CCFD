@@ -164,27 +164,3 @@ func FlattenSlice(slice interface{}) (result []float64) {
 
 	return
 }
-
-// BatchNormPredict performs a batch normalization operation on the input data using the specified batch normalization layer parameters.
-func BatchNormPredict(data interface{}, bnLayer *heccfd.BatchNormLayer) (output interface{}) {
-	switch data := data.(type) {
-	case [][]float64:
-		outputData := make([][]float64, len(data))
-		for i := range data {
-			outputData[i] = make([]float64, len(data[i]))
-			for j := range data[i] {
-				outputData[i][j] = (data[i][j] - bnLayer.Weight[j]) / bnLayer.Bias[j]
-			}
-		}
-		output = outputData
-	case []float64:
-		outputData := make([]float64, len(data))
-		for i := range data {
-			outputData[i] = (data[i] - bnLayer.Weight[i]) / bnLayer.Bias[i]
-		}
-		output = outputData
-	default:
-		panic("Invalid input type")
-	}
-	return
-}

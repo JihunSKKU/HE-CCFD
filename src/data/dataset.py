@@ -19,4 +19,4 @@ class CreditCardDataset(Dataset):
     def __getitem__(self, idx):
         if idx >= len(self.x):
             raise IndexError(f"Index {idx} out of range for dataset of size {len(self.x)}")
-        return torch.tensor(self.x[idx], dtype=torch.float32), torch.tensor(self.y[idx], dtype=torch.long)
+        return torch.tensor(self.x[idx], dtype=torch.float32), torch.tensor(self.y[idx], dtype=torch.float32)

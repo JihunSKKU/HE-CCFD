@@ -15,11 +15,11 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 if __name__ == '__main__':
     input_length = 30
-    # activation <= 'ReLU', 'ApproxReLU', or 'Square'
-    activation = 'ApproxReLU'
+    # activation <= 'ReLU', 'ApproxSwish', or 'Swish'
+    activation = 'ApproxSwish'
     model = CNN(input_length, activation).to(device)
 
-    epochs = 20
+    epochs = 70
     learning_rate = 0.0001
     batch_size = 32
 
@@ -28,11 +28,9 @@ if __name__ == '__main__':
     
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
-    
-    pos_weight = torch.tensor([1.0], dtype=torch.float).to(device)
 
     best_model, train_losses, train_f1_scores, train_accuracies, valid_losses, valid_f1_scores, valid_accuracies = train(
-        model, train_loader, valid_loader, epochs, learning_rate, device, pos_weight)
+        model, train_loader, valid_loader, epochs, learning_rate, device)
 
     best_epoch = np.argmax(valid_f1_scores) + 1
     best_f1_score = valid_f1_scores[best_epoch - 1]

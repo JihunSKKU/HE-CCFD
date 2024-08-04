@@ -36,7 +36,7 @@ func convCal() {
 
 	// Initialize the convolutional layer
 	var model heccfd.HeccfdModel
-	model, err = model.LoadModelParams("../models/best_ApproxReLU_model.json")
+	model, err = model.LoadModelParams("../models/ApproxSwish_model.json")
 	if err != nil {
 		panic(err)
 	}

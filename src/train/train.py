@@ -4,8 +4,8 @@ from torch.optim import Adam
 from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score
 from copy import deepcopy
 
-def train(model, train_loader, valid_loader, epochs, learning_rate, device, pos_weight):
-    criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+def train(model, train_loader, valid_loader, epochs, learning_rate, device):
+    criterion = nn.BCELoss()
     optimizer = Adam(model.parameters(), lr=learning_rate)
 
     best_f1 = 0
@@ -26,20 +26,20 @@ def train(model, train_loader, valid_loader, epochs, learning_rate, device, pos_
         train_loss, correct, total = 0.0, 0, 0
         all_labels, all_preds = [], []
 
-        for x, label in train_loader:
-            x, label = x.to(device), label.to(device).float()
+        for inputs, labels in train_loader:
+            inputs, labels = inputs.to(device), labels.to(device).float()
 
             optimizer.zero_grad()
-            output = model(x).squeeze()
-            loss = criterion(output, label)
+            outputs = model(inputs).squeeze()
+            loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
 
             train_loss += loss.item()
-            preds = (torch.sigmoid(output) > 0.5).long()
-            correct += (preds == label.long()).sum().item()
-            total += label.size(0)
-            all_labels.extend(label.cpu().numpy())
+            preds = (outputs > 0.5).long()
+            correct += (preds == labels.long()).sum().item()
+            total += labels.size(0)
+            all_labels.extend(labels.cpu().numpy())
             all_preds.extend(preds.cpu().numpy())
 
         train_losses.append(train_loss / len(train_loader))
@@ -58,17 +58,17 @@ def train(model, train_loader, valid_loader, epochs, learning_rate, device, pos_
         all_labels, all_preds = [], []
 
         with torch.no_grad():
-            for x, label in valid_loader:
-                x, label = x.to(device), label.to(device).float()
+            for inputs, labels in valid_loader:
+                inputs, labels = inputs.to(device), labels.to(device).float()
 
-                output = model(x).squeeze()
-                loss = criterion(output, label)
+                outputs = model(inputs).squeeze()
+                loss = criterion(outputs, labels)
 
                 valid_loss += loss.item()
-                preds = (torch.sigmoid(output) > 0.5).long()
-                correct += (preds == label.long()).sum().item()
-                total += label.size(0)
-                all_labels.extend(label.cpu().numpy())
+                preds = (outputs > 0.5).long()
+                correct += (preds == labels.long()).sum().item()
+                total += labels.size(0)
+                all_labels.extend(labels.cpu().numpy())
                 all_preds.extend(preds.cpu().numpy())
 
         valid_losses.append(valid_loss / len(valid_loader))

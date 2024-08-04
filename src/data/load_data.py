@@ -57,9 +57,8 @@ def load_data_undersampling(log: bool = False):
         scaler = StandardScaler()
         X = scaler.fit_transform(X)
 
-        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.2, random_state=42)
-        # X_valid, X_test, y_valid, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
-        X_valid, X_test, y_valid, y_test = X_temp.copy(), X_temp.copy(), y_temp.copy(), y_temp.copy()
+        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
+        X_valid, X_test, y_valid, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
         # Save data to CSV files
         pd.DataFrame(X_train).to_csv(X_train_path, index=False)
