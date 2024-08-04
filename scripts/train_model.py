@@ -19,7 +19,7 @@ if __name__ == '__main__':
     activation = 'ApproxSwish'
     model = CNN(input_length, activation).to(device)
 
-    epochs = 70
+    epochs = 100
     learning_rate = 0.0001
     batch_size = 32
 
