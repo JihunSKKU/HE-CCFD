@@ -3,9 +3,11 @@ package heccfd
 import (
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
+	"time"
 )
 
 func ReadCSV(filePath string) ([][]float64, error) {
@@ -37,20 +39,103 @@ func ReadCSV(filePath string) ([][]float64, error) {
     return data, nil
 }
 
-type HeccfdModel struct {
+type HEccfdModel struct {
 	Conv1 *Conv1DLayer `json:"conv1"`
 	Conv2 *Conv1DLayer `json:"conv2"`
 
 	FC1 *FCLayer `json:"fc1"`
 	FC2 *FCLayer `json:"fc2"`
-
-	BatchNorm1 *BatchNormLayer `json:"batchnorm1"`
-	BatchNorm2 *BatchNormLayer `json:"batchnorm2"`
-	BatchNorm3 *BatchNormLayer `json:"batchnorm3"`
 }
 
-func (model HeccfdModel) LoadModelParams(filePath string) (HeccfdModel, error) {
-	var modelParams HeccfdModel
+func (model HEccfdModel)CCFDForward(input [][]float64) []float64 {
+	// Step 1: Convolutional Layer 1
+	op1 := Conv1DPredict(input, model.Conv1)
+
+	// Step 2: ApproxSwish Activation Function
+	op2 := ApproxSwishPredict(op1).([][]float64)
+
+	// Step 3: Convolutional Layer 2
+	op3 := Conv1DPredict(op2, model.Conv2)
+
+	// Step 4: ApproxSwish Activation Function
+	op4 := ApproxSwishPredict(op3).([][]float64)
+
+	// Step 5: Flatten
+	op5 := FlattenSlice(op4)
+
+	// Step 6: Fully Connected Layer 1
+	op6 := FCPredict(op5, model.FC1)
+
+	// Step 7: ApproxSwish Activation Function
+	op7 := ApproxSwishPredict(op6).([]float64)
+
+	// Step 8: Fully Connected Layer 2
+	op8 := FCPredict(op7, model.FC2)
+
+	return op8
+}
+
+func (model HEccfdModel) HEccfdPredict(ctx *Context, op0 *Ciphertext) (opOut *Ciphertext, elaspedTime time.Duration) {
+	// Step 0: Copy the data in op0 to op1
+	baseTime := time.Now()
+	op1 := ctx.FillHEData(op0)
+	elaspedTime0 := time.Since(baseTime)
+	fmt.Printf("Copy time:  \t   %v\n", elaspedTime0)
+
+	// Step 1: Convolutional Layer 1
+	baseTime = time.Now()
+	op2 := HEConvLayer(ctx, op1, model.Conv1)
+	elaspedTime1 := time.Since(baseTime)
+	fmt.Printf("Conv1 time: \t   %v\n", elaspedTime1)
+
+	// Step 2: ApproxSwish Activation Function
+	baseTime = time.Now()
+	op3 := HEApproxSwishLayer(ctx, op2)
+	elaspedTime2 := time.Since(baseTime)
+	fmt.Printf("ApproxSwish1 time: %v\n", elaspedTime2)
+
+	// Step 3: Convolutional Layer 2
+	baseTime = time.Now()
+	op4 := HEConvLayer(ctx, op3, model.Conv2)
+	elaspedTime3 := time.Since(baseTime)
+	fmt.Printf("Conv2 time: \t   %v\n", elaspedTime3)
+
+	// Step 4: ApproxSwish Activation Function
+	baseTime = time.Now()
+	op5 := HEApproxSwishLayer(ctx, op4)
+	elaspedTime4 := time.Since(baseTime)
+	fmt.Printf("ApproxSwish2 time: %v\n", elaspedTime4)
+
+	// Step 5: Flatten
+	baseTime = time.Now()
+	op6 := HEFlatten(ctx, op5)
+	elaspedTime5 := time.Since(baseTime)
+	fmt.Printf("Flatten time: \t   %v\n", elaspedTime5)
+	
+	// Step 6: Fully Connected Layer 1
+	baseTime = time.Now()
+	op7 := HEFCLayer(ctx, op6, model.FC1)
+	elaspedTime6 := time.Since(baseTime)
+	fmt.Printf("FC1 time: \t   %v\n", elaspedTime6)
+
+	// Step 7: ApproxSwish Activation Function
+	baseTime = time.Now()
+	op8 := HEApproxSwishLayer(ctx, op7)
+	elaspedTime7 := time.Since(baseTime)
+	fmt.Printf("ApproxSwish3 time: %v\n", elaspedTime7)
+
+	// Step 8: Fully Connected Layer 2
+	baseTime = time.Now()
+	opOut = HEFCLayer(ctx, op8, model.FC2)
+	elaspedTime8 := time.Since(baseTime)
+	fmt.Printf("FC2 time: \t   %v\n", elaspedTime8)
+
+	elaspedTime = elaspedTime0 + elaspedTime1 + elaspedTime2 + elaspedTime3 + elaspedTime4 + elaspedTime5 + elaspedTime6 + elaspedTime7 + elaspedTime8
+	return
+}
+
+func (model HEccfdModel) LoadModelParams(filePath string) (HEccfdModel, error) {
+	var modelParams HEccfdModel
 	
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -74,10 +159,6 @@ func (model HeccfdModel) LoadModelParams(filePath string) (HeccfdModel, error) {
 
 	modelParams.FC1 = parseFCLayer("fc1", jsonData)
 	modelParams.FC2 = parseFCLayer("fc2", jsonData)
-
-	modelParams.BatchNorm1 = parseBatchNormLayer("batchnorm1", jsonData)
-	modelParams.BatchNorm2 = parseBatchNormLayer("batchnorm2", jsonData)
-	modelParams.BatchNorm3 = parseBatchNormLayer("batchnorm3", jsonData)
 
 	return modelParams, nil
 }
@@ -144,27 +225,4 @@ func parseFCLayer(layerName string, jsonData map[string]interface{}) *FCLayer {
         return fc
     }
     return nil
-}
-
-func parseBatchNormLayer(layerName string, jsonData map[string]interface{}) *BatchNormLayer {
-	if bnWeight, ok := jsonData[layerName+".weight"].([]interface{}); ok {
-		bn := &BatchNormLayer{
-			Channels: len(bnWeight),
-		}
-
-		bn.Gamma = make([]float64, len(bnWeight))
-		for i, w := range bnWeight {
-			bn.Gamma[i] = w.(float64)
-		}
-
-		if bnBias, ok := jsonData[layerName+".bias"].([]interface{}); ok {
-			bn.Beta = make([]float64, len(bnBias))
-			for i, b := range bnBias {
-				bn.Beta[i] = b.(float64)
-			}
-		}
-
-		return bn
-	}
-	return nil
 }

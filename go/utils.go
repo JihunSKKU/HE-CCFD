@@ -1,6 +1,125 @@
 package heccfd
 
-import "sort"
+import (
+	"math"
+	"reflect"
+	"sort"
+)
+
+// Conv1DPredict performs a 1D convolution operation on the input data using the specified convolutional layer parameters.
+func Conv1DPredict(data [][]float64, conv1dLayer *Conv1DLayer) (output [][]float64) {
+	inChannels := conv1dLayer.InChannels
+	outChannels := conv1dLayer.OutChannels
+	kernelSize := conv1dLayer.KernelSize
+	stride := conv1dLayer.Stride
+	padding := conv1dLayer.Padding
+	weight := conv1dLayer.Weight
+	bias := conv1dLayer.Bias
+
+	// Calculate the output dimensions
+	outputLength := (len(data[0]) - kernelSize + 2*padding) / stride + 1
+
+	// Initialize the output
+	output = make([][]float64, outChannels)
+	for i := range output {
+		output[i] = make([]float64, outputLength)
+	}
+	
+	// Perform the convolution for each batch
+	for oc := 0; oc < outChannels; oc++ {
+		for ol := 0; ol < outputLength; ol++ {
+			sum := bias[oc]
+			for ic := 0; ic < inChannels; ic++ {
+				for kl := 0; kl < kernelSize; kl++ {
+					inX := ol*stride - padding + kl
+					if inX >= 0 && inX < len(data[ic]) {
+						sum += data[ic][inX] * weight[oc][ic][kl]
+					}
+				}
+			}
+			output[oc][ol] = sum
+		}
+	}
+
+	return
+}
+
+// calculateApproxReLU calculates the approximate ReLU function on the input data.
+func calculateApproxSwish(x float64) (float64) {
+	return -0.002012*(math.Pow(x, 4) - 73.2107355865 * math.Pow(x, 2) - 248.508946322 * x - 59.5427435388)
+}
+
+// ApproxSwishPredict performs an approximate Swish operation on the input data.
+func ApproxSwishPredict(input interface{}) (output interface{}) {
+	switch input := input.(type) {
+	case [][]float64:
+		outputData := make([][]float64, len(input))
+		for i := range input {
+			outputData[i] = make([]float64, len(input[i]))
+			for j := range input[i] {
+				outputData[i][j] = calculateApproxSwish(input[i][j])
+			}
+		}
+		output = outputData
+	case []float64:
+		outputData := make([]float64, len(input))
+		for i := range input {
+			outputData[i] = calculateApproxSwish(input[i])
+		}
+		output = outputData
+	default:
+		panic("Invalid input type")
+	}
+	return
+}
+
+// FCPredict performs a fully connected layer operation on the input data using the specified FC layer parameters.
+func FCPredict(data []float64, fcLayer *FCLayer) (output []float64) {
+	inFeatures := fcLayer.InFeatures
+	outFeatures := fcLayer.OutFeatures
+	weight := fcLayer.Weight
+	bias := fcLayer.Bias
+
+	// Initialize the output
+	output = make([]float64, outFeatures)
+
+	// Perform the fully connected operation for each batch
+	for o := 0; o < outFeatures; o++ {
+		sum := bias[o]
+		for i := 0; i < inFeatures; i++ {
+			sum += data[i] * weight[o][i]
+		}
+		output[o] = sum
+	}
+
+	return
+}
+
+// FlattenSlice flattens a multi-dimensional slice into a 1D slice.
+func FlattenSlice(slice interface{}) (result []float64) {
+	val := reflect.ValueOf(slice)
+	if val.Kind() != reflect.Slice {
+		return result
+	}
+
+	for i := 0; i < val.Len(); i++ {
+		item := val.Index(i).Interface()
+		if reflect.TypeOf(item).Kind() == reflect.Slice {
+			result = append(result, FlattenSlice(item)...)
+		} else {
+			switch v := item.(type) {
+			case int:
+				result = append(result, float64(v))
+			case float64:
+				result = append(result, v)
+			default:
+				panic("Unsupported type")
+			}
+		}
+	}
+
+	return
+}
 
 // genRots generates a list of rotations needed for a given number of slots.
 // It returns a slice of integers representing the rotations.

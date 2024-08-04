@@ -10,12 +10,16 @@ type Ciphertext struct {
 	data 	[]*rlwe.Ciphertext
 	size 	 int
 	interval int
-	constVal int
+	constVal float64
 	space	 int
 }
 
 func (c *Ciphertext) GetData() []*rlwe.Ciphertext {
 	return c.data
+}
+
+func (c *Ciphertext) GetConst() float64 {
+	return c.constVal
 }
 
 func (c *Ciphertext) CopyNew() *Ciphertext {

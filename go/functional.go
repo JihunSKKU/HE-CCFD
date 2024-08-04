@@ -57,7 +57,7 @@ func (ctx *Context) AddMany(op0 []*rlwe.Ciphertext) (opOut *rlwe.Ciphertext) {
 	return
 }
 
-func (ctx *Context) fillHEData(op0 *Ciphertext) (opOut *Ciphertext) {
+func (ctx *Context) FillHEData(op0 *Ciphertext) (opOut *Ciphertext) {
 	var err error
 	
 	opOut = op0.CopyNew()

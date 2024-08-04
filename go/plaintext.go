@@ -4,7 +4,7 @@ type Plaintext struct {
 	data     [][]float64 	// The actual plaintext data
 	size     int     		// The size of the data
 	interval int  			// The interval of the data
-	constVal int         	// A constant value associated with the data
+	constVal float64      	// A constant value associated with the data
 	space 	 int     		// The space size of the data
 }
 
