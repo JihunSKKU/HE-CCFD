@@ -7,6 +7,53 @@ import (
 	"github.com/tuneinsight/lattigo/v5/he/hefloat"
 )
 
+func (ctx *Context) Packing(c *Ciphertext, dataLengths []int) *Ciphertext {
+	var err error
+	
+	if len(dataLengths) != len(c.data) {
+		panic("The length of dataLengths should be the same as the length of c.data")
+	}
+	if c.interval != 1 {
+		panic("The interval should be 1")
+	}
+	if c.constVal != 1 {
+		panic("The constVal should be 1")
+	}
+
+	ctxts := make([]*rlwe.Ciphertext, len(dataLengths))
+	indexs := make([]int, len(dataLengths))
+	for i := range indexs {
+		for j := 0; j < i; j++ {
+			indexs[i] += dataLengths[j]
+		}
+	}
+
+	wg := sync.WaitGroup{}
+	wg.Add(len(dataLengths))
+	for i := range dataLengths {
+		go func(i int) {
+			defer wg.Done()
+			if ctxts[i], err = ctx.RotationNew(c.data[i], -1 * indexs[i]); err != nil {
+				panic(err)
+			}
+		}(i)
+	}
+	wg.Wait()
+
+	size := 0
+	for _, l := range dataLengths {
+		size += l
+	}
+
+	return &Ciphertext{
+		data: 		[]*rlwe.Ciphertext{ctx.AddMany(ctxts)},
+		size: 		size,
+		interval: 	1,
+		constVal: 	1,
+		space: 	  	largestPowerOfTwoLessThan(size),
+	}
+}
+
 // Rotation rotates the input ciphertext op0 by k positions and stores the result in opOut.
 func (ctx *Context) Rotation(op0 *rlwe.Ciphertext, k int, opOut *rlwe.Ciphertext) (err error) {
 	eval := ctx.evalPool.Get().(*hefloat.Evaluator)

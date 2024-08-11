@@ -25,14 +25,14 @@ func TestTime(*testing.T) {
 	// randValue := random.int()
 
 	// Load CCFD test dataset
-	testImages, err := heccfd.ReadCSV("../../data/X_test.csv")
+	testDatas, err := heccfd.ReadCSV("../../data/X_test.csv")
 	if err != nil {
 		panic(err)
 	}
 	// Random value
-	randValue := randomIntInRange(0, len(testImages))
+	randValue := randomIntInRange(0, len(testDatas))
 	// Add to channel dimension
-	testImage := [][]float64{testImages[randValue]}
+	testData := [][]float64{testDatas[randValue]}
 
 	testLabels, err := heccfd.ReadCSV("../../data/y_test.csv")
 	if err != nil {
@@ -48,10 +48,10 @@ func TestTime(*testing.T) {
 	}
 
 	// Plaintext prediction
-	ptxtResult := model.CCFDForward(testImage)[0]
+	ptxtResult := model.CCFDForward(testData)[0]
 
 	// Ciphertext prediction
-	ptxt := heccfd.NewPlaintext(testImage)
+	ptxt := heccfd.NewPlaintext(testData)
 	ctxt := ctx.Encrypt(ptxt)
 
 	ctxt, elaspedTime := model.HEccfdPredict(ctx, ctxt)

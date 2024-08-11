@@ -309,9 +309,6 @@ func HEFCLayer(ctx *Context, op0 *Ciphertext, layer *FCLayer) (opOut *Ciphertext
 	sum := ctx.AddMany(cOuts)
 
 	// rg := sync.WaitGroup{}
-
-
-
 	pieceCt := make([]*rlwe.Ciphertext, q)
 	wg.Add(q)
 	for i := 0; i < q; i++ {

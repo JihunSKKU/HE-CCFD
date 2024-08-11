@@ -34,26 +34,23 @@ func NewContext(params hefloat.Parameters) (ctx *Context) {
 
 	ctx = &Context{
 		params: params,
-		ecd: hefloat.NewEncoder(params),
-		kgen: kgen,
-		sk: sk,
-		pk: pk,
-		enc: rlwe.NewEncryptor(params, pk),
-		dec: rlwe.NewDecryptor(params, sk),
+		ecd: 	hefloat.NewEncoder(params),
+		kgen: 	kgen,
+		sk: 	sk,
+		pk: 	pk,
+		enc: 	rlwe.NewEncryptor(params, pk),
+		dec: 	rlwe.NewDecryptor(params, sk),
 	}
 
 	if params.PCount() != 0 {
 		ctx.rlk = kgen.GenRelinearizationKeyNew(sk)
-
 		slots := params.MaxSlots()
 		rots := genRots(slots)
 		var galEls []uint64
 		for i := 0; i < len(rots); i++ {
 			galEls = append(galEls, params.GaloisElement(rots[i]))
 		}
-		galEls = append(galEls, params.GaloisElementForComplexConjugation())
-		
-		// eval 생성 부분이 15초 정도 걸림
+
 		eval := hefloat.NewEvaluator(params, rlwe.NewMemEvaluationKeySet(
 				ctx.rlk, kgen.GenGaloisKeysNew(galEls, sk)...))
 
