@@ -27,7 +27,7 @@ func initParams() (params hefloat.Parameters) {
 		hefloat.ParametersLiteral{
 			LogN: 				logSlots+1,
 			LogQ: 				initLogQ(depth, logScale),
-			LogP: 				[]int{51, 51, 51},
+			LogP: 				[]int{61, 61},
 			LogDefaultScale: 	logScale,
 			RingType: 			ring.Standard,
 		})

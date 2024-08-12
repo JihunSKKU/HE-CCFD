@@ -76,7 +76,7 @@ func TestPacking(*testing.T) {
 
 	// Data division
 	features := len(testData[0])
-	partialFeatures := []int{5, 7, 5, 6, 7}
+	partialFeatures := []int{6, 6, 6, 6, 6}
 	agencys := len(partialFeatures)
 	if sumInts(partialFeatures) != features {
 		panic("The number of features is not equal to the sum of the number of features of each agency")
@@ -92,22 +92,9 @@ func TestPacking(*testing.T) {
 	ctxt := ctx.Encrypt(ptxt)
 	
 	// Packing
-	times := make([]time.Duration, 30)
-	packingData := &heccfd.Ciphertext{}
-	
-	for i := 0; i < 30; i++ {
-		baseTime := time.Now()
-		packingData = ctx.Packing(ctxt, partialFeatures)
-		times[i] = time.Since(baseTime)
-		fmt.Println("Packing time:", times[i])
-	}
-	// averageTime print
-	averageTime := time.Duration(0)
-	for i := 0; i < 30; i++ {
-		averageTime += times[i]
-	}
-	averageTime /= 30
-	fmt.Println("Average packing time:", averageTime)
+	baseTime := time.Now()
+	packingData := ctx.Packing(ctxt, partialFeatures)
+	fmt.Println("Packing time:", time.Since(baseTime))
 
 	// Compare the result
 	for i := 0; i < agencys; i++ {
@@ -116,12 +103,15 @@ func TestPacking(*testing.T) {
 
 	packingM := ctx.Decrypt(packingData)
 	fmt.Println("\nAfter packing: ", packingM.GetData()[0][:features])
+
+	// Save ciphertext
+	SaveCiphertextToFile(packingData, "../data/ctxt.gob")
 }
 
-func TestSave(t *testing.T) {
-	SaveCiphertextToFile(&heccfd.Ciphertext{}, "../../data/ctxt.gob")
-}
+// func TestLoad(t *testing.T) {
+// 	op0, err := LoadCiphertextFromFile("../data/ctxt.gob")
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-func TestLoad(t *testing.T) {
-	LoadCiphertextFromFile("../../data/ctxt.gob")
-}
+// }
