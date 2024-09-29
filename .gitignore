@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,go,python,jupyternotebooks,windows,linux,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,go,python,jupyternotebooks,windows,linux,macos
 
+### Test ###
+*.sh
+
 ### Dataset ###
 *.csv
 *.zip
@@ -9,6 +12,7 @@
 *.pkl
 *.pth
 *.pt
+*.png
 
 ### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:
@@ -97,6 +101,7 @@ Temporary Items
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
+__pycache__
 __pycache__/
 *.py[cod]
 *$py.class

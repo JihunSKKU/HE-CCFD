@@ -31,17 +31,45 @@ TBD
     cd credit-card-fraud-detection
     ```
 
-2. **Install dependencies**:
+2. **Download the dataset**:
+    [Kaggle](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)에서 데이터셋을 다운로드하여 `dataset` 디렉토리에 위치시킵니다.
+
+<!-- 3. **Install dependencies**:
     ```sh
     pip install -r requirements.txt
+    ``` -->
+
+### Usage
+
+1. **Model training**:
+    ```sh
+    mkdir images
+    python scripts/train_model.py
     ```
 
-3. **Download the dataset**:
-    [Kaggle](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)에서 데이터셋을 다운로드하여 `dataset` 디렉토리에 위치시킵니다.
+2. **Model evaluation**:
+    ```sh
+    python scripts/evaluate_model.py
+    ```
+
+3. **Model save**:
+    ```sh
+    python scripts/model_save.py
+    ```
+
+4. **Go언어 (TBD)**:
+    ```sh
+    cd go
+    go mod tidy
+
+    go test ...
+    
+    ```
+
 
 ### License
 
-이 프로젝트는 MIT 라이선스에 따라 제공됩니다.
+TBD
 
 ### Acknowledgements
 
