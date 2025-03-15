@@ -30,10 +30,10 @@
 2. **Download the dataset**:
     [Kaggle](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)에서 데이터셋을 다운로드하여 압축을 해제하고, `creditcard.csv` 파일을 `data` 디렉토리에 위치시킵니다.
 
-<!-- 3. **Install dependencies**:
+3. **Install dependencies and package**:
     ```sh
-    pip install -r requirements.txt
-    ``` -->
+    pip install .
+    ```
 
 ### Usage
 
@@ -53,12 +53,12 @@
     python scripts/model_save.py
     ```
 
-4. **Go언어 (TBD)**:
+4. **Homomorphic Encryption 적용 Test**:
     ```sh
     cd go
     go mod tidy
 
-    go test ...
+    go test ./... -v
     
     ```
 
