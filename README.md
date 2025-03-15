@@ -11,10 +11,6 @@
 
 데이터셋에 대한 자세한 내용은 [Kaggle - Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)를 참고해 주세요.
 
-### Project Overview
-
-TBD
-
 ### Homomorphic Encryption
 
 동형암호는 암호화된 상태에서 연산을 수행할 수 있는 암호화 방식으로, 암호화된 결과를 복호화했을 때 원본 평문에서 연산한 결과와 동일한 결과를 얻을 수 있습니다. 
@@ -27,8 +23,8 @@ TBD
 
 1. **Clone the repository**:
     ```sh
-    git clone https://github.com/yourusername/credit-card-fraud-detection.git
-    cd credit-card-fraud-detection
+    git clone https://github.com/JihunSKKU/HE-CCFD
+    cd HE-CCFD
     ```
 
 2. **Download the dataset**:
@@ -65,11 +61,6 @@ TBD
     go test ...
     
     ```
-
-
-### License
-
-TBD
 
 ### Acknowledgements
 
