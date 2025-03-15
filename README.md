@@ -39,7 +39,6 @@
 
 1. **Model training**:
     ```sh
-    mkdir images
     python scripts/train_model.py
     ```
 

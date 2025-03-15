@@ -19,6 +19,10 @@ if __name__ == '__main__':
     for name, param in model.state_dict().items():
         model_dict[name] = param.detach().cpu().numpy().tolist()
 
+    # Ensure the images directory exists
+    if not os.path.exists('./go/models'):
+        os.makedirs('./go/models')
+    
     json_path = f'./go/models/{activation}_model.json'
     with open(json_path, 'w') as json_file:
         json.dump(model_dict, json_file)

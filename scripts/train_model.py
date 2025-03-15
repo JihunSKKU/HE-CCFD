@@ -39,6 +39,10 @@ if __name__ == '__main__':
 
     epochs_range = range(1, epochs + 1)
 
+    # Ensure the images directory exists
+    if not os.path.exists('./images'):
+        os.makedirs('./images')
+    
     # Plot Loss graph
     plt.figure()
     plt.plot(epochs_range, train_losses, label='Train Loss')
