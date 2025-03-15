@@ -28,7 +28,7 @@
     ```
 
 2. **Download the dataset**:
-    [Kaggle](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)에서 데이터셋을 다운로드하여 `dataset` 디렉토리에 위치시킵니다.
+    [Kaggle](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)에서 데이터셋을 다운로드하여 압축을 해제하고, `creditcard.csv` 파일을 `data` 디렉토리에 위치시킵니다.
 
 <!-- 3. **Install dependencies**:
     ```sh
